@@ -22,3 +22,7 @@ API server is up and running at `localhost:3000` with the database persisted.
 6. Enable automatic progress
 7. On another device, login using the credentials
 8. Test with "Pull progress from other devices now"
+
+---
+
+Made for fun without AI
