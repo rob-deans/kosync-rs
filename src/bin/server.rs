@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use tracing_subscriber::EnvFilter;
 
-use kosync_rs::app_error::AppError;
+use kosync_rs::{app_error::AppError, build_db};
 use kosync_rs::{BookProgress, User};
 
 static MIGRATIONS: toasty::migration::MigrationSet = toasty::embed_migrations!();
@@ -56,11 +56,7 @@ async fn main() {
             EnvFilter::try_from_default_env().unwrap_or_else(|_| "info,toasty=debug".into()),
         )
         .init();
-    let db = toasty::Db::builder()
-        .models(toasty::models!(crate::*))
-        .connect("sqlite:./kosync.db")
-        .await
-        .unwrap();
+    let db = build_db().await.unwrap();
 
     let _ = migrate(&db).await;
 
