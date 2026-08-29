@@ -1,0 +1,103 @@
+version = 1
+
+[schema]
+
+[[schema.tables]]
+id = 0
+name = "book_progresses"
+primary_key = { columns = [{ table = 0, index = 0 }], index = { table = 0, index = 0 } }
+
+[[schema.tables.columns]]
+id = { table = 0, index = 0 }
+name = "document_id"
+ty = "String"
+storage_ty = "Text"
+
+[[schema.tables.columns]]
+id = { table = 0, index = 1 }
+name = "username"
+ty = "String"
+storage_ty = "Text"
+
+[[schema.tables.columns]]
+id = { table = 0, index = 2 }
+name = "percentage"
+ty = "F32"
+storage_ty = { Float = 4 }
+
+[[schema.tables.columns]]
+id = { table = 0, index = 3 }
+name = "progress"
+ty = "String"
+storage_ty = "Text"
+
+[[schema.tables.columns]]
+id = { table = 0, index = 4 }
+name = "device"
+ty = "String"
+storage_ty = "Text"
+
+[[schema.tables.columns]]
+id = { table = 0, index = 5 }
+name = "created_at"
+ty = "String"
+storage_ty = "Text"
+
+[[schema.tables.columns]]
+id = { table = 0, index = 6 }
+name = "updated_at"
+ty = "String"
+storage_ty = "Text"
+
+[[schema.tables.indices]]
+id = { table = 0, index = 0 }
+name = "index_book_progresses_by_document_id"
+on = 0
+columns = [{ column = { table = 0, index = 0 }, op = "Eq", scope = "Partition" }]
+unique = true
+primary_key = true
+
+[[schema.tables.indices]]
+id = { table = 0, index = 1 }
+name = "index_book_progresses_by_document_id_and_username"
+on = 0
+columns = [{ column = { table = 0, index = 0 }, op = "Eq", scope = "Partition" }, { column = { table = 0, index = 1 }, op = "Eq", scope = "Local" }]
+unique = true
+
+[[schema.tables]]
+id = 1
+name = "users"
+primary_key = { columns = [{ table = 1, index = 0 }], index = { table = 1, index = 0 } }
+
+[[schema.tables.columns]]
+id = { table = 1, index = 0 }
+name = "id"
+ty = "Bytes"
+storage_ty = "Blob"
+
+[[schema.tables.columns]]
+id = { table = 1, index = 1 }
+name = "username"
+ty = "String"
+storage_ty = "Text"
+
+[[schema.tables.columns]]
+id = { table = 1, index = 2 }
+name = "passkey"
+ty = "String"
+storage_ty = "Text"
+
+[[schema.tables.indices]]
+id = { table = 1, index = 0 }
+name = "index_users_by_id"
+on = 1
+columns = [{ column = { table = 1, index = 0 }, op = "Eq", scope = "Partition" }]
+unique = true
+primary_key = true
+
+[[schema.tables.indices]]
+id = { table = 1, index = 1 }
+name = "index_users_by_username"
+on = 1
+columns = [{ column = { table = 1, index = 1 }, op = "Eq", scope = "Partition" }]
+unique = true
