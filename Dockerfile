@@ -20,9 +20,9 @@ FROM gcr.io/distroless/cc-debian12:nonroot AS final
 WORKDIR /app
 
 # Copy Rust binary
-COPY --from=backend /app/target/release/kosync-rs /app/kosync-rs
+COPY --from=backend /app/target/release/server /app/server
 COPY --from=backend /app/toasty /app/toasty
 
 # Set the entrypoint to run the binary
-ENTRYPOINT ["/app/kosync-rs"]
+ENTRYPOINT ["/app/server"]
 
