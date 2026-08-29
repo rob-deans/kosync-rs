@@ -67,7 +67,7 @@ async fn main() {
     let app = Router::new()
         .route("/health", get(healthcheck))
         .route("/users/create", post(register))
-        .route("/users/auth", get(auth_v2))
+        .route("/users/auth", get(auth))
         .route("/syncs/progress", put(sync_progress))
         .route("/syncs/progress/{document}", get(get_progress))
         .with_state(db);
@@ -104,17 +104,14 @@ async fn register(
     }
 }
 
-async fn auth_v2(
-    headers: HeaderMap,
-    State(db): State<toasty::Db>,
-) -> Result<Json<Value>, AppError> {
-    match auth(headers, db).await {
+async fn auth(headers: HeaderMap, State(db): State<toasty::Db>) -> Result<Json<Value>, AppError> {
+    match authorise(headers, db).await {
         Ok(_) => Ok(Json(json!({"authorized": "OK"}))),
         Err(_) => Err(AppError::Auth),
     }
 }
 
-async fn auth(headers: HeaderMap, mut db: toasty::Db) -> Result<UserDto, AppError> {
+async fn authorise(headers: HeaderMap, mut db: toasty::Db) -> Result<UserDto, AppError> {
     if let Some(auth_user) = headers.get("x-auth-user") && let Some(auth_key) = headers.get("x-auth-key") {
         match User::get_by_username(&mut db, auth_user.to_str().unwrap()).await {
             Ok(user) => {
@@ -139,7 +136,7 @@ async fn get_progress(
     State(mut db): State<toasty::Db>,
     Path(document): Path<String>,
 ) -> Result<Json<ProgressDto>, AppError> {
-    let user = auth(headers, db.clone()).await?;
+    let user = authorise(headers, db.clone()).await?;
 
     match BookProgress::get_by_document_id_and_username(&mut db, document, user.username).await {
         Ok(p) => Ok(Json(ProgressDto {
@@ -164,7 +161,7 @@ async fn sync_progress(
     State(mut db): State<toasty::Db>,
     Json(payload): Json<UpdateProgressDto>,
 ) -> Result<Json<Value>, AppError> {
-    let user = auth(headers, db.clone()).await?;
+    let user = authorise(headers, db.clone()).await?;
 
     match BookProgress::upsert_by_document_id_and_username(payload.document, &user.username)
         .percentage(payload.percentage)
