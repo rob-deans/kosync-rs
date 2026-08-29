@@ -143,7 +143,6 @@ async fn get_progress(
             document: p.document_id,
         })),
         Err(e) => {
-            println!("{e:?}");
             if e.is_record_not_found() {
                 return Err(AppError::BookNotFound);
             }
